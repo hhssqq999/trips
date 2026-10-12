@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>苏州桂香一日游 · 10月11日（周日）</title>
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/leaflet/1.9.4/leaflet.min.css" onerror="this.onerror=null;this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'">
+<style>
+:root{--gold:#d89b2b;--osm:#f3c64b;--deep:#7a3e12;--ink:#3b2a1a;--paper:#fffaf0;--card:#ffffff;--muted:#8a7660;--red:#b5452b;--green:#5b7b3a}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;
+background-image:radial-gradient(circle at 10% 0%,#fde9b8 0,transparent 40%),radial-gradient(circle at 100% 20%,#f7d9a6 0,transparent 35%)}
+header{padding:28px 18px 18px;text-align:center;position:relative;overflow:hidden}
+header h1{margin:0;font-size:26px;letter-spacing:2px;color:var(--deep)}
+header .sub{color:var(--muted);font-size:14px;margin-top:6px}
+.petals{position:absolute;inset:0;pointer-events:none;opacity:.55}
+.petals span{position:absolute;width:7px;height:7px;background:var(--osm);border-radius:50% 0 50% 0;transform:rotate(45deg)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+.chip{background:#fff;border:1px solid #f0d9a8;border-radius:999px;padding:5px 12px;font-size:13px;box-shadow:0 1px 3px rgba(122,62,18,.08)}
+main{max-width:980px;margin:0 auto;padding:0 14px 40px}
+section{margin-top:22px}
+h2{font-size:19px;color:var(--deep);margin:0 0 10px;display:flex;align-items:center;gap:8px}
+h2:before{content:"";width:10px;height:10px;background:var(--osm);border-radius:50% 0 50% 0;transform:rotate(45deg);display:inline-block}
+#map{height:420px;border-radius:16px;border:2px solid #f0d9a8;box-shadow:0 4px 18px rgba(122,62,18,.12);background:#f6efe2}
+.mapnote{font-size:12px;color:var(--muted);margin-top:6px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:4px}
+.legend i{display:inline-block;width:22px;height:0;border-top:4px solid var(--red);vertical-align:middle;margin-right:4px}
+.legend i.w{border-top:3px dashed var(--green)}
+.num{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#f5c85a,#d58a1f);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);font-size:14px}
+.num.food{background:linear-gradient(135deg,#e07a4f,#b5452b)}.num.tea{background:linear-gradient(135deg,#8fb35d,#5b7b3a)}.num.parking{background:linear-gradient(135deg,#6b8fc7,#355b99)}.num.start{background:linear-gradient(135deg,#9a8370,#5c4636)}
+.tl{position:relative;padding-left:22px}
+.tl:before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:linear-gradient(#f3c64b,#d58a1f)}
+.item{position:relative;background:var(--card);border-radius:14px;padding:12px 14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(122,62,18,.08);border:1px solid #f5e6c8}
+.item:before{content:"";position:absolute;left:-19px;top:16px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--gold)}
+.item .t{font-weight:700;color:var(--gold);font-size:15px}
+.item h3{margin:2px 0 4px;font-size:16px}
+.item p{margin:4px 0;font-size:14px}
+.drive{background:#fff6e3;border:1px dashed #e8c37a;border-radius:10px;padding:6px 10px;font-size:13px;margin:-4px 0 12px;color:#7a5a2a}
+.btn{display:inline-flex;align-items:center;gap:4px;margin-top:6px;margin-right:6px;padding:7px 12px;border-radius:999px;background:linear-gradient(135deg,#f5c85a,#d58a1f);color:#fff;text-decoration:none;font-size:13px;font-weight:600;box-shadow:0 2px 6px rgba(213,138,31,.35)}
+.btn.alt{background:#fff;color:var(--deep);border:1px solid #e8c37a;box-shadow:none}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:6px;margin-left:4px;vertical-align:middle}
+.free{background:#e7f3dc;color:#3f6a1f}.pay{background:#fde7df;color:#a03c22}.unv{background:#f2ece4;color:#8a6f50;border:1px dashed #c9b296}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--card);border-radius:16px;padding:14px;border:1px solid #f5e6c8;box-shadow:0 2px 10px rgba(122,62,18,.08)}
+.card h3{margin:0 0 4px;font-size:16px;color:var(--deep)}
+.card .price{font-size:22px;font-weight:800;color:var(--red)}
+.card ul{margin:6px 0;padding-left:18px;font-size:14px}
+.dish{display:inline-block;background:#fff4dc;border-radius:8px;padding:2px 8px;margin:2px 3px 2px 0;font-size:13px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(122,62,18,.08);font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid #f5e6c8;text-align:left}
+th{background:#fff1d3;color:var(--deep)}
+td.r{text-align:right;white-space:nowrap}
+tr.total td{font-weight:800;background:#fff8e8}
+.weather{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#fff4d6,#ffe3b0);border-radius:16px;padding:14px 16px}
+.weather .big{font-size:40px}
+.tips li{margin-bottom:6px;font-size:14px}
+footer{font-size:12px;color:var(--muted);text-align:center;padding:20px}
+a{color:#b0661a}
+.fallback{padding:30px;text-align:center;color:var(--muted)}
+.leaflet-popup-content{font-family:inherit;font-size:13px}
+@media(max-width:600px){header h1{font-size:22px}#map{height:340px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="petals" id="petals"></div>
+  <h1>🌼 苏州 · 桂香平江一日游</h1>
+  <div class="sub">2026年10月11日（周日） · 2人自驾 · 上海人民广场出发 · 当天往返</div>
+  <div class="chips">
+    <span class="chip">☀️ 晴到多云 18–25℃</span>
+    <span class="chip">🚗 单程约90–100公里</span>
+    <span class="chip">🎫 主体验全部免费</span>
+    <span class="chip">💰 两人约 ¥560–720（估算）</span>
+  </div>
+</header>
+<main>
+<section>
+  <h2>路线地图</h2>
+  <div id="map"><div class="fallback">地图加载中…如长时间不显示，请检查网络，下方行程与导航按钮仍可正常使用。</div></div>
+  <div class="legend"><span><i></i>自驾路线</span><span><i class="w"></i>平江路步行（示意）</span><span>🟡景点 🔴餐厅 🟢茶馆 🔵停车</span></div>
+  <div class="mapnote">底图：高德地图（GCJ-02坐标）。自驾路线来自 OSRM 开源路网，仅供示意，实际以高德导航为准。标有 <span class="tag unv">位置约略</span> 的点为根据门牌/路口估算，导航前请在高德里核对店名。</div>
+</section>
+
+<section>
+  <h2>天气</h2>
+  <div class="weather"><div class="big">🌤️</div><div><b>晴到多云 · 18–25℃ · 北风&lt;3级 · 无雨</b><br><span style="font-size:13px;color:#7a5a2a">早晚略凉，带一件薄外套；日落约 17:30。来源：<a href="https://www.weather.com.cn/textFC/shanghai.shtml" target="_blank">中国天气网</a>（上海）、<a href="https://www.nmc.cn/publish/forecast/ASH/shanghai.html" target="_blank">中央气象台</a>，苏州未单独查询，预计相近。</span></div></div>
+</section>
+
+<section>
+  <h2>行程时间线</h2>
+  <div class="tl" id="timeline"></div>
+</section>
+
+<section>
+  <h2>吃喝推荐</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>🍽️ 姑苏家宴·苏帮菜（午餐）</h3>
+      <div><span class="price">¥75</span>/人 <span style="font-size:12px;color:var(--muted)">大众点评 4.8 · 平江路美食热门榜第1</span></div>
+      <div style="margin:6px 0"><span class="dish">松鼠桂鱼</span><span class="dish">苏式东坡肉</span><span class="dish">莼菜银鱼羹</span><span class="dish">响油鳝糊</span><span class="dish">苏州糖藕</span><span class="dish">江南熟醉大闸蟹</span></div>
+      <p style="font-size:13px;margin:4px 0">📍 白塔东路321号（中国银行对面）；另有资料写319–321号/325号 · ☎ 18014035213（携程）</p>
+      <p style="font-size:13px;margin:4px 0;color:var(--muted)">午市排队多，建议11:45前到。营业时间未核实。</p>
+      <a class="btn alt" href="http://m.dianping.com/shop/5724794" target="_blank">大众点评</a><a class="btn alt" href="https://you.ctrip.com/food/11/12473587.html" target="_blank">携程</a>
+    </div>
+    <div class="card">
+      <h3>🍲 旧人家食府·传承苏帮菜（晚餐）</h3>
+      <div><span class="price">¥71</span>/人 <span style="font-size:12px;color:var(--muted)">大众点评 4.4 · 苏州糖醋排骨菜品榜第2</span></div>
+      <div style="margin:6px 0"><span class="dish">糖醋排骨</span><span class="dish">银鱼炒蛋</span><span class="dish">松鼠桂鱼</span><span class="dish">响油鳝糊</span><span class="dish">三丝莼菜汤</span><span class="dish">清炒虾仁</span></div>
+      <p style="font-size:13px;margin:4px 0">📍 平江路大柳枝巷一带（点评地址被截断）<span class="tag unv">位置约略</span></p>
+      <p style="font-size:13px;margin:4px 0;color:var(--muted)">电话、营业时间未核实，出发前在点评查看。</p>
+      <a class="btn alt" href="http://m.dianping.com/shop/32472328" target="_blank">大众点评</a>
+    </div>
+    <div class="card">
+      <h3>🍵 琵琶语评弹茶馆·平江路北馆</h3>
+      <div><span class="price">¥38起</span>/人 <span style="font-size:12px;color:var(--muted)">票价各来源不一：38–88 / 58–128</span></div>
+      <ul><li>📍 狮林寺巷99号 金谷里艺术馆2楼（原平江路189号老店已于2024年迁址）</li><li>🕚 每天 11:00–22:00 多场（第三方资料）</li><li>☎ 18013051773（百度资料，未核实）</li><li>想听吴亮莹老师需提前电话问场次，可遇不可求</li></ul>
+      <a class="btn alt" href="http://suzhou.bendibao.com/tour/2023216/110336.shtm" target="_blank">本地宝攻略</a><a class="btn alt" href="https://news.2500sz.com/doc/2024/08/07/1099449.shtml" target="_blank">迁址报道</a>
+    </div>
+    <div class="card">
+      <h3>🌼 桂花公园 · 桂花市集</h3>
+      <div><span class="price" style="color:var(--green)">免费</span> <span style="font-size:12px;color:var(--muted)">全年全天开放 · 姑苏区竹辉路1号</span></div>
+      <ul><li>苏州桂花10月5日前后集中开放，市集至10月25日</li><li>可买新鲜桂花、糖桂花、桂花蜜、栗子、白果（农户自产，价格先问）</li></ul>
+      <a class="btn alt" href="https://www.suzhou.gov.cn/szsrmzf/tpxw/202610/e7331995ea9c441186d4fbcdcffab260.shtml" target="_blank">苏州市政府</a><a class="btn alt" href="https://ylj.suzhou.gov.cn/szsylj/mpjg/wztt.shtml" target="_blank">园林局票价表</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>两人预算（估算）</h2>
+  <table>
+    <tr><th>项目</th><th>说明</th><th class="r">金额</th></tr>
+    <tr><td>高速费</td><td>G2京沪高速，往返约 33–40元/程 <span class="tag unv">估算</span></td><td class="r">¥66–80</td></tr>
+    <tr><td>油费</td><td>约 100 公里/程，按 7L/百公里 <span class="tag unv">估算</span>；电车约 ¥30</td><td class="r">¥120</td></tr>
+    <tr><td>停车</td><td>和基广场一带 10–20元/天 + 桂花公园附近（未查到）<span class="tag unv">估算</span></td><td class="r">¥20–40</td></tr>
+    <tr><td>桂花公园 · 平江路</td><td><span class="tag free">免费</span></td><td class="r">¥0</td></tr>
+    <tr><td>午餐 姑苏家宴</td><td>人均约75</td><td class="r">¥150</td></tr>
+    <tr><td>晚餐 旧人家食府</td><td>人均约71</td><td class="r">¥142</td></tr>
+    <tr><td>评弹茶馆（可选）</td><td>38元起/人 <span class="tag pay">可选</span></td><td class="r">¥76+</td></tr>
+    <tr><td>摇橹船（可选）</td><td>40元/人，保吉利桥—青石桥往返约30分钟 <span class="tag pay">可选</span></td><td class="r">¥80</td></tr>
+    <tr><td>小吃 / 桂花伴手礼</td><td>糖粥、梅花糕、糖桂花等</td><td class="r">¥30–50</td></tr>
+    <tr class="total"><td>合计</td><td>不含可选 ≈ ¥530–580；全选 ≈ ¥690–740</td><td class="r">¥560–720</td></tr>
+  </table>
+  <div class="mapnote">高速/油费参考：<a href="https://www.icauto.com.cn/route/102_133.html" target="_blank">车主手册</a>（约102公里、路桥40元、油费61元）、<a href="https://www.modiauto.com.cn/zijia/r3027.html" target="_blank">无敌电动</a>（过路费约33元）。</div>
+</section>
+
+<section>
+  <h2>贴士 & 待核实</h2>
+  <ul class="tips">
+    <li>🚗 <b>车程</b>：开源路网（OSRM）算出人民广场→桂花公园约 90 公里、畅通约 70 分钟；综合攻略，实际约 <b>1小时20分–1小时40分</b>，堵车可能超过2小时。</li>
+    <li>🕖 <b>回程</b>：周日傍晚 G2 进沪方向易堵。本方案 <b>19:30 后出发</b>；若想早回，16:30 前离开。</li>
+    <li>🅿️ <b>停车</b>：平江路周边车位很紧，建议 11:40 前到和基广场；停车费以现场为准。桂花公园周边停车未查到，到了先看现场指引。</li>
+    <li>🏮 平江路 18:30 后红灯笼亮起，晚饭后散步最出片。</li>
+    <li>⚠️ <b>未核实</b>：餐厅营业时间、旧人家电话与精确地址、评弹票价与场次、桂花公园停车、各点位精确坐标（标“位置约略”者）。出发前请在大众点评 / 高德里再看一眼。</li>
+  </ul>
+</section>
+</main>
+<footer>本页由 Grok Bot 整理 · 信息来自公开网页，价格与时间以现场为准 · 2026-10-10</footer>
+
+<script>
+const DATA={"stops": [{"id": 1, "name": "上海人民广场（出发）", "approx": false, "time": "08:30", "kind": "start", "gcj": [31.231967, 121.475532]}, {"id": 2, "name": "桂花公园", "approx": false, "time": "10:00", "kind": "sight", "gcj": [31.291745, 120.643801]}, {"id": 3, "name": "和基广场停车场", "approx": true, "time": "11:40", "kind": "parking", "gcj": [31.308834, 120.630885]}, {"id": 4, "name": "姑苏家宴（午餐）", "approx": true, "time": "12:00", "kind": "food", "gcj": [31.318736, 120.629684]}, {"id": 5, "name": "琵琶语评弹茶馆（平江路北馆）", "approx": true, "time": "13:30", "kind": "tea", "gcj": [31.320036, 120.629184]}, {"id": 6, "name": "悬桥巷", "approx": false, "time": "14:45", "kind": "sight", "gcj": [31.315039, 120.633388]}, {"id": 7, "name": "大儒巷", "approx": false, "time": "15:30", "kind": "sight", "gcj": [31.312436, 120.631786]}, {"id": 8, "name": "旧人家食府（平江路店，晚餐）", "approx": true, "time": "17:00", "kind": "food", "gcj": [31.316141, 120.63469]}], "go": [[31.232153, 121.475916], [31.231364, 121.476428], [31.229954, 121.477439], [31.228283, 121.477331], [31.227108, 121.475529], [31.225049, 121.470754], [31.223939, 121.467541], [31.223991, 121.463989], [31.223907, 121.455671], [31.222421, 121.451011], [31.22137, 121.447993], [31.219837, 121.442937], [31.219149, 121.440163], [31.216665, 121.436375], [31.213696, 121.431794], [31.211279, 121.429687], [31.210289, 121.426598], [31.209418, 121.421846], [31.208532, 121.418015], [31.208034, 121.414671], [31.209093, 121.412793], [31.209694, 121.411216], [31.210516, 121.407678], [31.21108, 121.404235], [31.21277, 121.400186], [31.214381, 121.399785], [31.21804, 121.398127], [31.218426, 121.395877], [31.218211, 121.390006], [31.218716, 121.386182], [31.219461, 121.381022], [31.219808, 121.37778], [31.219629, 121.375325], [31.219712, 121.372919], [31.221849, 121.370906], [31.223666, 121.36596], [31.223898, 121.358533], [31.223609, 121.34793], [31.223699, 121.344856], [31.224077, 121.339739], [31.223909, 121.335942], [31.223201, 121.331559], [31.221501, 121.321812], [31.218125, 121.31131], [31.217592, 121.30682], [31.217982, 121.303447], [31.217857, 121.301281], [31.216478, 121.297925], [31.211702, 121.286678], [31.205168, 121.26736], [31.204053, 121.264416], [31.204465, 121.262372], [31.205863, 121.261114], [31.209611, 121.259459], [31.212998, 121.257475], [31.21561, 121.255825], [31.216667, 121.254906], [31.218609, 121.252848], [31.220357, 121.250175], [31.220833, 121.247006], [31.218714, 121.22737], [31.214823, 121.191649], [31.214657, 121.18257], [31.215863, 121.157242], [31.216651, 121.141724], [31.217441, 121.135066], [31.219384, 121.124246], [31.221793, 121.114609], [31.2234, 121.108373], [31.224632, 121.101316], [31.225133, 121.094735], [31.224933, 121.086527], [31.224171, 121.080424], [31.223032, 121.07494], [31.221261, 121.067492], [31.220298, 121.060061], [31.220503, 121.047627], [31.220716, 121.040572], [31.220238, 121.031422], [31.21789, 121.015852], [31.217069, 120.999393], [31.218069, 120.985229], [31.218149, 120.971084], [31.218163, 120.96552], [31.21923, 120.954535], [31.222031, 120.939163], [31.224977, 120.925614], [31.229389, 120.913401], [31.234787, 120.902672], [31.239886, 120.89253], [31.242478, 120.884502], [31.244547, 120.870998], [31.246113, 120.861993], [31.249813, 120.851367], [31.252273, 120.845104], [31.254765, 120.836148], [31.256377, 120.824225], [31.256035, 120.812236], [31.253408, 120.802013], [31.24485, 120.78822], [31.241732, 120.785053], [31.24101, 120.784144], [31.240725, 120.78351], [31.240523, 120.782672], [31.240492, 120.781839], [31.240724, 120.780682], [31.241173, 120.778244], [31.242626, 120.772878], [31.246001, 120.766828], [31.248332, 120.764021], [31.250777, 120.761252], [31.252328, 120.760104], [31.257893, 120.758235], [31.262863, 120.756385], [31.268301, 120.754079], [31.271632, 120.753715], [31.27617, 120.751758], [31.280366, 120.749615], [31.280037, 120.740082], [31.279588, 120.727863], [31.279126, 120.714397], [31.279491, 120.710423], [31.280278, 120.707309], [31.284735, 120.694504], [31.285279, 120.691598], [31.285496, 120.68927], [31.2855, 120.686776], [31.284428, 120.675086], [31.282926, 120.659108], [31.282009, 120.649411], [31.281318, 120.64134], [31.280863, 120.638426], [31.282512, 120.637745], [31.286689, 120.637272], [31.290241, 120.636476], [31.291342, 120.640328], [31.291588, 120.642512]], "local": [[31.291588, 120.642512], [31.291424, 120.640993], [31.29125, 120.6395], [31.291083, 120.638567], [31.290846, 120.636336], [31.291676, 120.636153], [31.293357, 120.635863], [31.293345, 120.634778], [31.293247, 120.633648], [31.293195, 120.633001], [31.293727, 120.632755], [31.294155, 120.632701], [31.29443, 120.632675], [31.294731, 120.63267], [31.295038, 120.632679], [31.296302, 120.632745], [31.296842, 120.632759], [31.297373, 120.632753], [31.298261, 120.632694], [31.29896, 120.632663], [31.299496, 120.632595], [31.300149, 120.632504], [31.300763, 120.63246], [31.302142, 120.632431], [31.303102, 120.632362], [31.305711, 120.632179], [31.306838, 120.632076], [31.308071, 120.631899], [31.308322, 120.631858], [31.30928, 120.631776], [31.309321, 120.631766], [31.309353, 120.631747], [31.309386, 120.631714], [31.309403, 120.631666], [31.309409, 120.631611], [31.309406, 120.631555], [31.309185, 120.630365], [31.30876, 120.630466]], "back": [[31.30876, 120.630466], [31.308108, 120.632135], [31.308577, 120.634354], [31.309095, 120.635906], [31.309466, 120.63794], [31.309587, 120.638666], [31.310183, 120.640895], [31.311298, 120.646006], [31.312133, 120.649937], [31.315516, 120.649039], [31.317771, 120.648405], [31.318398, 120.648232], [31.323384, 120.646899], [31.326018, 120.645977], [31.327352, 120.645331], [31.329618, 120.643476], [31.332813, 120.64083], [31.338361, 120.639232], [31.343761, 120.637762], [31.347261, 120.638371], [31.34899, 120.639835], [31.349648, 120.64137], [31.350029, 120.641728], [31.350487, 120.641671], [31.350858, 120.641287], [31.351235, 120.640605], [31.351455, 120.639832], [31.351459, 120.638443], [31.351131, 120.637047], [31.350268, 120.635783], [31.348799, 120.634649], [31.347866, 120.634417], [31.346692, 120.634698], [31.346317, 120.635212], [31.346344, 120.63566], [31.347004, 120.636652], [31.347267, 120.637513], [31.346854, 120.642208], [31.345832, 120.650929], [31.345321, 120.655682], [31.345036, 120.661561], [31.345198, 120.669111], [31.347034, 120.680924], [31.349951, 120.69427], [31.351499, 120.709546], [31.352694, 120.720107], [31.356282, 120.735809], [31.36381, 120.757479], [31.366011, 120.763691], [31.367645, 120.769013], [31.368801, 120.775323], [31.369114, 120.783056], [31.368374, 120.790175], [31.366721, 120.796699], [31.36368, 120.804375], [31.359218, 120.812385], [31.354449, 120.824392], [31.352708, 120.83224], [31.351522, 120.841996], [31.350022, 120.854894], [31.349475, 120.861667], [31.349388, 120.86574], [31.349486, 120.869767], [31.350155, 120.880467], [31.350462, 120.888229], [31.350309, 120.893735], [31.349502, 120.901937], [31.347998, 120.910411], [31.345758, 120.922109], [31.344915, 120.929074], [31.345047, 120.941495], [31.344731, 120.955862], [31.343796, 120.96127], [31.341892, 120.968217], [31.338221, 120.978059], [31.334575, 120.990255], [31.331365, 121.012039], [31.33136, 121.027915], [31.33053, 121.041133], [31.327311, 121.05602], [31.325288, 121.061922], [31.322546, 121.069131], [31.319232, 121.081544], [31.316381, 121.088485], [31.309889, 121.097817], [31.303753, 121.105905], [31.299795, 121.114949], [31.296533, 121.127278], [31.294579, 121.133003], [31.292945, 121.136502], [31.290661, 121.140417], [31.286162, 121.146218], [31.280956, 121.152139], [31.271784, 121.160346], [31.26678, 121.164624], [31.262986, 121.168265], [31.25912, 121.173216], [31.256931, 121.176907], [31.254692, 121.181864], [31.253011, 121.187221], [31.252131, 121.191606], [31.251452, 121.198763], [31.250707, 121.209214], [31.250249, 121.21567], [31.249857, 121.227178], [31.249727, 121.233357], [31.249598, 121.239689], [31.249623, 121.247613], [31.250001, 121.252517], [31.25077, 121.257642], [31.251722, 121.262211], [31.25316, 121.268587], [31.253991, 121.275093], [31.254086, 121.280055], [31.252897, 121.289341], [31.250962, 121.299767], [31.250397, 121.305581], [31.250298, 121.310473], [31.250569, 121.317539], [31.251042, 121.327261], [31.251285, 121.331244], [31.2514, 121.332425], [31.251474, 121.335618], [31.251863, 121.343534], [31.251978, 121.348106], [31.251709, 121.353626], [31.250828, 121.364115], [31.249605, 121.376807], [31.248426, 121.382777], [31.245475, 121.393764], [31.244636, 121.399627], [31.245491, 121.411839], [31.240653, 121.420614], [31.237484, 121.424609], [31.23469, 121.430886], [31.237138, 121.43252], [31.238157, 121.435551], [31.240595, 121.438164], [31.242739, 121.440735], [31.244279, 121.44507], [31.245211, 121.450665], [31.245783, 121.453597], [31.245922, 121.458154], [31.245525, 121.460823], [31.244503, 121.464576], [31.244219, 121.467437], [31.24447, 121.46961], [31.244242, 121.471209], [31.24236, 121.471452], [31.239778, 121.472501], [31.237005, 121.473663], [31.234116, 121.474724], [31.232153, 121.475916]], "walk": [[31.308834, 120.630885], [31.318736, 120.629684], [31.320036, 120.629184], [31.315039, 120.633388], [31.312436, 120.631786], [31.316141, 120.63469], [31.308834, 120.630885]]};
+const DETAIL={
+1:{desc:"早上出发，走 延安高架 → 内环 → 武宁路 → G2京沪高速 → 苏州。",cost:"",free:null},
+2:{desc:"桂花盛开 + 桂花市集（至10/25）。买点糖桂花、桂花蜜当伴手礼。",cost:"免费",free:true},
+3:{desc:"老城区车位紧，尽量早到。之后全程步行。",cost:"约10–20元/天（以现场为准）",free:null},
+4:{desc:"松鼠桂鱼、苏式东坡肉、莼菜银鱼羹、熟醉蟹。人均约¥75。",cost:"人均约¥75",free:null},
+5:{desc:"一壶碧螺春 + 吴侬软语评弹。想听吴亮莹老师先电话问场次。",cost:"38元起（可选）",free:false},
+6:{desc:"从平江路拐进悬桥巷，老苏州生活气息，人少安静。可在保吉利桥一带坐摇橹船（40元/人，可选）。",cost:"免费",free:true},
+7:{desc:"小巷慢逛，回到平江路主街买糖粥、梅花糕。",cost:"免费",free:true},
+8:{desc:"糖醋排骨、银鱼炒蛋、响油鳝糊。饭后在亮灯的平江路散步，19:30 回停车场返程。",cost:"人均约¥71",free:null}
+};
+const DRIVES={2:"🚗 自驾约 1小时20分–1小时40分 · 约90公里 · 高速费约¥33–40",3:"🚗 自驾约 10–15 分钟 · 约3公里",4:"🚶 步行约 12 分钟 · 约800米",5:"🚶 步行约 3 分钟",6:"🚶 经白塔东路→平江路南行，步行约 15 分钟",7:"🚶 步行约 5 分钟",8:"🚶 沿平江路北行，步行约 10 分钟"};
+function nav(s){const [lat,lng]=s.gcj;return `https://uri.amap.com/marker?position=${lng},${lat}&name=${encodeURIComponent(s.name)}&coordinate=gaode&callnative=1`}
+// timeline
+const tl=document.getElementById('timeline');let h='';
+DATA.stops.forEach(s=>{const d=DETAIL[s.id];
+ if(DRIVES[s.id]) h+=`<div class="drive">${DRIVES[s.id]}</div>`;
+ h+=`<div class="item"><div class="t">${s.time}</div><h3>${s.id}. ${s.name}${s.approx?'<span class="tag unv">位置约略</span>':''}${d.free===true?'<span class="tag free">免费</span>':''}${d.free===false?'<span class="tag pay">可选付费</span>':''}</h3><p>${d.desc}</p>${d.cost?`<p style="color:var(--muted);font-size:13px">💰 ${d.cost}</p>`:''}<a class="btn" href="${nav(s)}" target="_blank">📍 高德导航</a></div>`;});
+h+=`<div class="drive">🚗 19:30 从和基广场出发返程 · 约95公里 · 约 1小时30分（视路况）</div><div class="item"><div class="t">≈21:00</div><h3>回到上海 🏠</h3><p>到家前别忘了把糖桂花放冰箱～</p><a class="btn" href="${nav(DATA.stops[0])}" target="_blank">📍 导航回人民广场</a></div>`;
+tl.innerHTML=h;
+// petals
+const p=document.getElementById('petals');for(let i=0;i<18;i++){const e=document.createElement('span');e.style.left=Math.random()*100+'%';e.style.top=Math.random()*100+'%';e.style.opacity=.3+Math.random()*.7;p.appendChild(e)}
+// map
+function initMap(){
+ if(typeof L==='undefined'){document.getElementById('map').innerHTML='<div class="fallback">⚠️ 地图组件加载失败（可能网络限制）。请直接使用下方每一站的「高德导航」按钮。</div>';return}
+ document.getElementById('map').innerHTML='';
+ const map=L.map('map',{zoomControl:true,attributionControl:true});
+ L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',{subdomains:'1234',maxZoom:18,attribution:'© 高德地图'}).addTo(map);
+ L.polyline(DATA.go,{color:'#b5452b',weight:4,opacity:.8}).addTo(map);
+ L.polyline(DATA.local,{color:'#b5452b',weight:4,opacity:.8}).addTo(map);
+ L.polyline(DATA.back,{color:'#b5452b',weight:3,opacity:.45,dashArray:'2 6'}).addTo(map);
+ L.polyline(DATA.walk,{color:'#5b7b3a',weight:3,dashArray:'6 6'}).addTo(map);
+ const g=[];
+ DATA.stops.forEach(s=>{const icon=L.divIcon({className:'',html:`<div class="num ${s.kind}">${s.id}</div>`,iconSize:[30,30],iconAnchor:[15,15]});
+  const m=L.marker(s.gcj,{icon}).addTo(map);m.bindPopup(`<b>${s.id}. ${s.name}</b><br>${s.time} · ${DETAIL[s.id].desc}${s.approx?'<br><i style="color:#8a6f50">位置约略</i>':''}<br><a href="${nav(s)}" target="_blank">📍 高德导航</a>`);g.push(s.gcj)});
+ // fit to Suzhou cluster, with button to see whole route
+ const sz=L.latLngBounds(g.slice(1));map.fitBounds(sz,{padding:[30,30]});
+ const all=L.latLngBounds(DATA.go.concat(g));
+ const C=L.Control.extend({onAdd:function(){const b=L.DomUtil.create('a','btn');b.style.cssText='margin:0;cursor:pointer';b.innerHTML='🗺️ 全程/苏州';let full=false;b.onclick=e=>{L.DomEvent.stop(e);full=!full;map.fitBounds(full?all:sz,{padding:[30,30]})};return b}});
+ new C({position:'topright'}).addTo(map);
+}
+function loadLeaflet(srcs){if(!srcs.length){initMap();return}const s=document.createElement('script');s.src=srcs[0];s.onload=initMap;s.onerror=()=>loadLeaflet(srcs.slice(1));document.head.appendChild(s)}
+loadLeaflet(['https://cdn.bootcdn.net/ajax/libs/leaflet/1.9.4/leaflet.min.js','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js','https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js']);
+</script>
+</body>
+</html>
