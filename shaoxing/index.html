@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>绍兴周末自驾 · 11月7–8日</title>
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/leaflet/1.9.4/leaflet.min.css" onerror="this.onerror=null;this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'">
+<style>
+:root{--gold:#c17a2e;--osm:#e8b86d;--deep:#5c3a1e;--ink:#2f2418;--paper:#faf6ef;--card:#ffffff;--muted:#8a7660;--red:#b5452b;--green:#5b7b3a;--rain:#3d6f9c;--wine:#8b3a3a}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;
+background-image:radial-gradient(circle at 8% 0%,#e8f0f8 0,transparent 42%),radial-gradient(circle at 100% 18%,#f5e0c8 0,transparent 38%)}
+header{padding:28px 18px 18px;text-align:center;position:relative;overflow:hidden}
+header h1{margin:0;font-size:26px;letter-spacing:2px;color:var(--deep)}
+header .sub{color:var(--muted);font-size:14px;margin-top:6px}
+.petals{position:absolute;inset:0;pointer-events:none;opacity:.45}
+.petals span{position:absolute;width:8px;height:8px;background:#7aa3c4;border-radius:50% 0 50% 0;transform:rotate(45deg)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+.chip{background:#fff;border:1px solid #e0d0b0;border-radius:999px;padding:5px 12px;font-size:13px;box-shadow:0 1px 3px rgba(92,58,30,.08)}
+.chip.warn{background:#e8f2fb;border-color:#a8c4dd;color:var(--rain);font-weight:600}
+main{max-width:980px;margin:0 auto;padding:0 14px 40px}
+section{margin-top:22px}
+h2{font-size:19px;color:var(--deep);margin:0 0 10px;display:flex;align-items:center;gap:8px}
+h2:before{content:"";width:10px;height:10px;background:var(--osm);border-radius:50% 0 50% 0;transform:rotate(45deg);display:inline-block}
+#map{height:440px;border-radius:16px;border:2px solid #e0d0b0;box-shadow:0 4px 18px rgba(92,58,30,.12);background:#eef3f7}
+.mapnote{font-size:12px;color:var(--muted);margin-top:6px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:4px}
+.legend i{display:inline-block;width:22px;height:0;border-top:4px solid var(--red);vertical-align:middle;margin-right:4px}
+.legend i.w{border-top:3px dashed var(--green)}.legend i.d{border-top:3px dashed #8b6b4a}
+.num{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#f5c85a,#d58a1f);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);font-size:14px}
+.num.food{background:linear-gradient(135deg,#e07a4f,#b5452b)}.num.tea{background:linear-gradient(135deg,#8fb35d,#5b7b3a)}.num.parking{background:linear-gradient(135deg,#6b8fc7,#355b99)}.num.start{background:linear-gradient(135deg,#9a8370,#5c4636)}.num.hotel{background:linear-gradient(135deg,#9b6bb5,#6a3d82)}.num.opt{background:linear-gradient(135deg,#7a9bb8,#3d6f9c)}
+.tl{position:relative;padding-left:22px}
+.tl:before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:linear-gradient(#e8b86d,#c17a2e)}
+.item{position:relative;background:var(--card);border-radius:14px;padding:12px 14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(92,58,30,.08);border:1px solid #efe2c8}
+.item:before{content:"";position:absolute;left:-19px;top:16px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--gold)}
+.item .t{font-weight:700;color:var(--gold);font-size:15px}
+.item h3{margin:2px 0 4px;font-size:16px}
+.item p{margin:4px 0;font-size:14px}
+.day{background:linear-gradient(90deg,#5c3a1e,#8b5a2b);color:#fff;border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;margin:16px 0 12px;letter-spacing:1px}
+.drive{background:#fff6e3;border:1px dashed #e8c37a;border-radius:10px;padding:6px 10px;font-size:13px;margin:-4px 0 12px;color:#7a5a2a}
+.btn{display:inline-flex;align-items:center;gap:4px;margin-top:6px;margin-right:6px;padding:7px 12px;border-radius:999px;background:linear-gradient(135deg,#e8b86d,#c17a2e);color:#fff;text-decoration:none;font-size:13px;font-weight:600;box-shadow:0 2px 6px rgba(193,122,46,.35)}
+.btn.alt{background:#fff;color:var(--deep);border:1px solid #e0c090;box-shadow:none}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:6px;margin-left:4px;vertical-align:middle}
+.free{background:#e7f3dc;color:#3f6a1f}.pay{background:#fde7df;color:#a03c22}.unv{background:#f2ece4;color:#8a6f50;border:1px dashed #c9b296}.rain{background:#e3eef8;color:#2f5f88}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--card);border-radius:16px;padding:14px;border:1px solid #efe2c8;box-shadow:0 2px 10px rgba(92,58,30,.08)}
+.card h3{margin:0 0 4px;font-size:16px;color:var(--deep)}
+.card .price{font-size:22px;font-weight:800;color:var(--red)}
+.card ul{margin:6px 0;padding-left:18px;font-size:14px}
+.dish{display:inline-block;background:#fff4dc;border-radius:8px;padding:2px 8px;margin:2px 3px 2px 0;font-size:13px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(92,58,30,.08);font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid #efe2c8;text-align:left}
+th{background:#f3e6d0;color:var(--deep)}
+td.r{text-align:right;white-space:nowrap}
+tr.total td{font-weight:800;background:#faf3e6}
+.weather{display:flex;align-items:flex-start;gap:14px;background:linear-gradient(135deg,#dceaf6,#b8d4ea);border-radius:16px;padding:14px 16px;border:1px solid #9bb8d0}
+.weather .big{font-size:40px;line-height:1}
+.tips li{margin-bottom:6px;font-size:14px}
+footer{font-size:12px;color:var(--muted);text-align:center;padding:20px}
+a{color:#9a5a18}
+.fallback{padding:30px;text-align:center;color:var(--muted)}
+.leaflet-popup-content{font-family:inherit;font-size:13px}
+.intro{background:var(--card);border-radius:16px;padding:14px 16px;border:1px solid #efe2c8;font-size:14px;box-shadow:0 2px 10px rgba(92,58,30,.06)}
+@media(max-width:600px){header h1{font-size:22px}#map{height:340px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="petals" id="petals"></div>
+  <h1>🍶 绍兴 · 周末自驾两日游</h1>
+  <div class="sub">2026年11月7日（六）– 8日（日） · 2人自驾 · 上海新江湾出发 · 安昌→仓桥→鲁迅故里</div>
+  <div class="chips">
+    <span class="chip warn">🌧️ 两天有雨 · 务必带伞</span>
+    <span class="chip">🚗 单程约200–220公里 · 约2.5–3小时</span>
+    <span class="chip">🎫 安昌街 / 仓桥 / 鲁迅故里免费</span>
+    <span class="chip">💰 两人约 ¥700–1100（含一晚住宿估算）</span>
+  </div>
+</header>
+<main>
+
+<section>
+  <h2>一句话路线</h2>
+  <div class="intro">
+    <b>周六</b>上午新江湾出发 → 安昌古镇（免费街区、廊棚挡雨、入口停车）→ 傍晚进城住仓桥/书圣片区 → 夜逛仓桥直街吃饭喝酒；
+    <b>周日</b>一早鲁迅故里（免费预约）→ 可选沈园（约40元）→ 午饭后返沪，尽量避开晚高峰。
+    柯岩联票、东湖未塞进主线（票价更高、雨天露天体验一般）。
+  </div>
+</section>
+
+<section>
+  <h2>路线地图</h2>
+  <div id="map"><div class="fallback">地图加载中…如长时间不显示，请检查网络，下方行程与导航按钮仍可正常使用。</div></div>
+  <div class="legend">
+    <span><i></i>自驾主线（示意）</span>
+    <span><i class="d"></i>返程（示意）</span>
+    <span><i class="w"></i>古城步行串线</span>
+    <span>🟡景点 🔴餐 🔵停车 🟣住宿 🟤出发 🔷可选</span>
+  </div>
+  <div class="mapnote">底图：高德地图（GCJ-02）。折线为关键点示意，<b>不是</b>实测路网。标有 <span class="tag unv">位置约略</span> 的点根据公开门牌/景区入口估算，导航前请在高德里核对店名。未代订酒店、未代购票。</div>
+</section>
+
+<section>
+  <h2>天气 · 降雨预警</h2>
+  <div class="weather">
+    <div class="big">🌧️</div>
+    <div>
+      <b>周六 11/7：阴转中雨 / 小雨转大雨 · 约 14–22℃</b><br>
+      <b>周日 11/8：小雨或中雨 · 约 13–19℃</b><br>
+      <span style="font-size:13px;color:#2f5f88">多源预报不完全一致，但两天都有雨。安昌廊棚、鲁迅故里室内展馆相对友好；东湖/鉴湖船游体验会打折。带伞、防水鞋、薄外套。<br>
+      来源：<a href="https://www.tianqi.com/tianqi/shaoxing/20261107.html" target="_blank">天气网 11/7</a> ·
+      <a href="https://m.tianqi.com/tianqi/shaoxing/20261108.html" target="_blank">天气网 11/8</a> ·
+      <a href="https://tianqi.so.com/weather/101210507" target="_blank">360天气</a>
+      ——出发前再看一眼最新预报。</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>行程时间线</h2>
+  <div class="tl" id="timeline"></div>
+</section>
+
+<section>
+  <h2>吃喝推荐</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>🍽️ 阿丘十碗头（仓桥方向）</h3>
+      <div><span class="price">¥60+</span>/人 <span style="font-size:12px;color:var(--muted)">第三方约人均63 · 未打开点评核实</span></div>
+      <div style="margin:6px 0"><span class="dish">霉干菜扣肉</span><span class="dish">醉鸡</span><span class="dish">绍兴十碗头</span><span class="dish">黄酒</span></div>
+      <p style="font-size:13px;margin:4px 0">📍 仓桥直街一带（检索写府山/仓桥直街144号）<span class="tag unv">位置约略</span></p>
+      <p style="font-size:13px;margin:4px 0;color:var(--muted)">营业时间、电话、是否仍开业请出发前用大众点评/高德确认。</p>
+      <a class="btn alt" href="https://www.amap.com/search?query=%E9%98%BF%E4%B8%98%E5%8D%81%E7%A2%97%E5%A4%B4%20%E4%BB%93%E6%A1%A5" target="_blank">高德搜店</a>
+    </div>
+    <div class="card">
+      <h3>🏮 咸亨酒店（鲁迅故里旁）</h3>
+      <div><span class="price">打卡向</span> <span style="font-size:12px;color:var(--muted)">游客店 · 氛围够用</span></div>
+      <div style="margin:6px 0"><span class="dish">黄酒</span><span class="dish">茴香豆</span><span class="dish">臭豆腐</span><span class="dish">梅干菜扣肉</span></div>
+      <p style="font-size:13px;margin:4px 0">📍 鲁迅中路一带，紧挨故里入口<span class="tag unv">位置约略</span></p>
+      <p style="font-size:13px;margin:4px 0;color:var(--muted)">适合「到此一吃」；想吃更本地的绍兴菜优先阿丘一类馆子。</p>
+      <a class="btn alt" href="https://uri.amap.com/search?keyword=%E5%92%B8%E4%BA%A8%E9%85%92%E5%BA%97&city=%E7%BB%8D%E5%85%B4&callnative=1" target="_blank">高德搜店</a>
+    </div>
+    <div class="card">
+      <h3>🛍️ 安昌廊棚小吃</h3>
+      <div><span class="price" style="color:var(--green)">街边</span> <span style="font-size:12px;color:var(--muted)">古镇街区免费 · 联票可不买</span></div>
+      <div style="margin:6px 0"><span class="dish">腊肠</span><span class="dish">酱鸭</span><span class="dish">酒酿馒头</span><span class="dish">扯白糖</span><span class="dish">臭豆腐</span></div>
+      <ul>
+        <li>往里走几家再买，常更实在（攻略说法）</li>
+        <li>乌篷船：本地宝写平日约65元/船（限3人），节假日约80元/船 —— 本周末是否节假日价<span class="tag unv">未核实</span></li>
+      </ul>
+      <a class="btn alt" href="https://m.sx.bendibao.com/tour/jingdianbao/" target="_blank">绍兴本地宝</a>
+    </div>
+    <div class="card">
+      <h3>🏨 住哪一片（不代订）</h3>
+      <div><span class="price" style="font-size:18px;color:var(--deep)">三选一</span></div>
+      <ul>
+        <li><b>仓桥直街 / 鲁迅故里</b>：走路最方便，周末停车难 → 优先选含车位的店</li>
+        <li><b>书圣故里 / 八字桥</b>：相对安静，水乡巷弄感强</li>
+        <li><b>城东商业 / 轨道 TOD</b>（如梅山春晓一带）：停车省心，再地铁/打车进故里</li>
+      </ul>
+      <p style="font-size:13px;color:var(--muted)">本页不代订；价格随周末波动，自行在携程/美团比价。</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>门票速查</h2>
+  <table>
+    <tr><th>项目</th><th>说明</th><th class="r">参考</th></tr>
+    <tr><td>安昌古镇街区</td><td><span class="tag free">免费</span> 小景点联票可选</td><td class="r">¥0 / 联票约¥50</td></tr>
+    <tr><td>仓桥直街</td><td><span class="tag free">免费</span></td><td class="r">¥0</td></tr>
+    <tr><td>鲁迅故里</td><td><span class="tag free">免费</span> 须微信分时预约</td><td class="r">¥0</td></tr>
+    <tr><td>沈园（白天）</td><td><span class="tag pay">可选</span> 约40元/人</td><td class="r">¥80（两人）</td></tr>
+    <tr><td>东湖（未排入）</td><td>约50元/人 + 船另计</td><td class="r">—</td></tr>
+    <tr><td>柯岩联票（未排入）</td><td>第三方常写约95元含画舫</td><td class="r">—</td></tr>
+  </table>
+  <div class="mapnote">鲁迅故里预约：「绍兴市文旅集团」或「绍兴鲁迅纪念馆」公众号。开放截止时间各源略有出入，以预约页为准。
+    <a href="https://sxlxmuseum.com/cgzn/lxgl.htm" target="_blank">官方参观指南</a> ·
+    <a href="http://sx.bendibao.com/tour/2022930/16537.shtm" target="_blank">本地宝·鲁迅故里</a> ·
+    <a href="https://sx.bendibao.com/tour/20221212/17617.shtm" target="_blank">本地宝·沈园</a>
+  </div>
+</section>
+
+<section>
+  <h2>两人预算（粗估）</h2>
+  <table>
+    <tr><th>项目</th><th>说明</th><th class="r">金额</th></tr>
+    <tr><td>高速过路费</td><td>绍兴旅游网写来回约205元量级 <span class="tag unv">估算</span></td><td class="r">¥180–220</td></tr>
+    <tr><td>油费/电费</td><td>往返约400–440公里 <span class="tag unv">估算</span></td><td class="r">¥200–280</td></tr>
+    <tr><td>停车</td><td>安昌 + 鲁迅故里等 <span class="tag unv">估算</span></td><td class="r">¥40–80</td></tr>
+    <tr><td>住宿一晚</td><td>古城周边双人房，周末波动大 <span class="tag unv">估算</span></td><td class="r">¥250–450</td></tr>
+    <tr><td>餐食小吃</td><td>安昌街边 + 正餐 + 黄酒</td><td class="r">¥300–500</td></tr>
+    <tr><td>沈园（可选）</td><td>40×2</td><td class="r">¥80</td></tr>
+    <tr><td>乌篷船（可选）</td><td>约65–80/船</td><td class="r">¥65–80</td></tr>
+    <tr class="total"><td>合计</td><td>不含可选 ≈ ¥700–1100；全选略高</td><td class="r">¥700–1100+</td></tr>
+  </table>
+  <div class="mapnote">车程参考：<a href="https://www.shaoxingtour.cn/lyfw/jtzn/jtxx.htm" target="_blank">绍兴旅游资讯网</a>（上海约220公里、约2.5小时）。</div>
+</section>
+
+<section>
+  <h2>贴士 &amp; 待核实</h2>
+  <ul class="tips">
+    <li>🌧️ <b>雨天策略</b>：安昌廊棚 + 鲁迅室内展馆优先；雨大就砍沈园、砍船，早点返沪。</li>
+    <li>🅿️ <b>停车</b>：安昌导航「安昌古镇停车场」。鲁迅故里 1/2 号停车场（本地宝：30分钟内免费，4小时内小车约10元/次等，以现场为准）；满了可考虑 TOD 停车场再地铁进。<a href="https://sx.bendibao.com/jieri/2026430/35710.shtm" target="_blank">停车说明</a></li>
+    <li>📱 <b>今晚预约</b>鲁迅故里周日上午时段（每账号最多约5人）。</li>
+    <li>🕖 <b>周日回程</b>：建议 <b>13:30–14:30</b> 上路，尽量 16:00 前过嘉兴段；午后至傍晚沪杭甬/杭州湾进沪方向易堵。</li>
+    <li>⚠️ <b>未核实</b>：实时车程与过路费、安昌停车单价、乌篷船是否节假日价、鲁迅开放截止时点、餐馆营业与人均、各点精确坐标。出发前请用高德 + 大众点评再确认。</li>
+    <li>🚫 本页不代订酒店、不代购票、不代打电话。</li>
+  </ul>
+</section>
+</main>
+<footer>本页由 Grok Bot 整理 · 信息来自公开网页，价格与时间以现场为准 · 2026-11-06 · <a href="../">返回目录</a></footer>
+
+<script>
+/* GCJ-02 approx coords — marked approx where not from a precise POI pin */
+const DATA={
+  stops:[
+    {id:1,name:"上海新江湾（出发）",approx:true,time:"周六 08:00",kind:"start",day:"sat",gcj:[31.3405,121.5158]},
+    {id:2,name:"安昌古镇停车场",approx:true,time:"周六 ≈11:00",kind:"parking",day:"sat",gcj:[30.0882,120.4865]},
+    {id:3,name:"安昌古镇（廊棚街区）",approx:true,time:"周六 11:15–15:30",kind:"sight",day:"sat",gcj:[30.0868,120.4888]},
+    {id:4,name:"仓桥直街 / 入住片区",approx:true,time:"周六 ≈16:30",kind:"hotel",day:"sat",gcj:[30.0016,120.5798]},
+    {id:5,name:"阿丘十碗头（晚饭）",approx:true,time:"周六 18:00",kind:"food",day:"sat",gcj:[30.0022,120.5806]},
+    {id:6,name:"鲁迅故里停车场",approx:true,time:"周日 08:15",kind:"parking",day:"sun",gcj:[29.9978,120.5812]},
+    {id:7,name:"鲁迅故里",approx:true,time:"周日 08:30–11:30",kind:"sight",day:"sun",gcj:[29.9970,120.5826]},
+    {id:8,name:"沈园（可选）",approx:true,time:"周日 11:40–13:00",kind:"opt",day:"sun",gcj:[29.9956,120.5862]},
+    {id:9,name:"返程 · 回新江湾",approx:true,time:"周日 14:00→≈17:30",kind:"start",day:"sun",gcj:[31.3405,121.5158]}
+  ],
+  /* schematic polylines (not OSRM) */
+  go:[[31.3405,121.5158],[31.28,121.40],[31.15,121.20],[30.95,120.95],[30.70,120.75],[30.40,120.60],[30.20,120.52],[30.0882,120.4865]],
+  local:[[30.0882,120.4865],[30.0868,120.4888],[30.05,120.52],[30.02,120.56],[30.0016,120.5798],[30.0022,120.5806],[29.9978,120.5812],[29.9970,120.5826],[29.9956,120.5862]],
+  walk:[[30.0016,120.5798],[30.0022,120.5806],[29.9978,120.5812],[29.9970,120.5826],[29.9956,120.5862],[30.0016,120.5798]],
+  back:[[29.9956,120.5862],[30.10,120.65],[30.40,120.80],[30.70,120.95],[31.00,121.15],[31.20,121.35],[31.3405,121.5158]]
+};
+const DETAIL={
+  1:{desc:"从新江湾出发，经市区上高速（G60 / 杭州湾环线等，以高德实时为准）。按 2.5–3 小时预留。",cost:"过路费单程约百元级（未实时核实）",free:null},
+  2:{desc:"导航「安昌古镇停车场」。周末建议 11 点前到。第三方写约 5 元/小时、封顶约 20 元——未官方核实。",cost:"停车费以现场为准",free:null},
+  3:{desc:"街区免费；小景点联票约 50 元可不买。雨天走廊棚最舒服。午饭吃腊肠、酱鸭、酒酿馒头等街边小吃。可选乌篷船。",cost:"街区免费；船可选",free:true},
+  4:{desc:"安昌→越城约 30–45 分钟（未实时核实）。入住仓桥/书圣/鲁迅故里片区（优先含停车）。傍晚逛仓桥直街（免费）。",cost:"住宿另计",free:true},
+  5:{desc:"绍兴菜：霉干菜扣肉、醉鸡、配黄酒。备选：咸亨酒店打卡茴香豆+臭豆腐。营业信息出发前再确认。",cost:"人均约 ¥60+（第三方）",free:null},
+  6:{desc:"导航鲁迅故里 1/2 号停车场。满了改 TOD（梅山春晓等）再地铁/打车。本地宝：30 分钟内免费，4 小时内小车约 10 元/次。",cost:"停车以现场为准",free:null},
+  7:{desc:"免费，须提前微信分时预约。祖居、故居、百草园、三味书屋、纪念馆等。雨天室内展馆占比高，仍值得。咨询电话本地宝写 0575-85132080。",cost:"免费（预约）",free:true},
+  8:{desc:"白天票约 40 元/人。雨中园林有意境但湿滑。雨大或赶时间可直接砍掉，午饭后返程。",cost:"约 ¥40/人（可选）",free:false},
+  9:{desc:"建议 13:30–14:30 上路，尽量避开周日傍晚进沪拥堵。到新江湾约 2.5–3.5 小时视路况。",cost:"",free:null}
+};
+const DRIVES={
+  2:"🚗 自驾约 2.5–3 小时 · 约 200–220 公里 · 绍兴旅游网口径约 2.5 小时/220 公里",
+  3:"🚶 停车场步行入镇 · 约数分钟",
+  4:"🚗 安昌 → 越城古城 · 约 30–45 分钟（示意）",
+  5:"🚶 仓桥直街内步行 · 约 5–10 分钟",
+  6:"🚶 或短途挪车 · 入住点 → 鲁迅故里停车场",
+  7:"🚶 停车场步行入园",
+  8:"🚶 鲁迅故里 → 沈园 · 约 10–15 分钟",
+  9:"🚗 返程约 2.5–3.5 小时 · 建议早走躲堵"
+};
+function nav(s){const [lat,lng]=s.gcj;return `https://uri.amap.com/marker?position=${lng},${lat}&name=${encodeURIComponent(s.name)}&coordinate=gaode&callnative=1`}
+
+const tl=document.getElementById('timeline');
+let h='';
+let lastDay='';
+DATA.stops.forEach(s=>{
+  const d=DETAIL[s.id];
+  if(s.day!==lastDay){
+    lastDay=s.day;
+    h+=`<div class="day">${s.day==='sat'?'📅 第一天 · 周六 11月7日（安昌 → 仓桥）':'📅 第二天 · 周日 11月8日（鲁迅故里 → 返沪）'}</div>`;
+  }
+  if(DRIVES[s.id]) h+=`<div class="drive">${DRIVES[s.id]}</div>`;
+  const tags=(s.approx?'<span class="tag unv">位置约略</span>':'')+(d.free===true?'<span class="tag free">免费</span>':'')+(d.free===false?'<span class="tag pay">可选付费</span>':'')+(s.id<=3||s.id===8?'<span class="tag rain">雨天友好度看点</span>':'');
+  h+=`<div class="item"><div class="t">${s.time}</div><h3>${s.id}. ${s.name}${tags}</h3><p>${d.desc}</p>${d.cost?`<p style="color:var(--muted);font-size:13px">💰 ${d.cost}</p>`:''}<a class="btn" href="${nav(s)}" target="_blank">📍 高德导航</a></div>`;
+});
+tl.innerHTML=h;
+
+const p=document.getElementById('petals');
+for(let i=0;i<20;i++){const e=document.createElement('span');e.style.left=Math.random()*100+'%';e.style.top=Math.random()*100+'%';e.style.opacity=.25+Math.random()*.55;e.style.background=i%3===0?'#7aa3c4':'#e8b86d';p.appendChild(e)}
+
+function initMap(){
+  if(typeof L==='undefined'){document.getElementById('map').innerHTML='<div class="fallback">⚠️ 地图组件加载失败（可能网络限制）。请直接使用下方每一站的「高德导航」按钮。</div>';return}
+  document.getElementById('map').innerHTML='';
+  const map=L.map('map',{zoomControl:true,attributionControl:true});
+  L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',{subdomains:'1234',maxZoom:18,attribution:'© 高德地图'}).addTo(map);
+  L.polyline(DATA.go,{color:'#b5452b',weight:4,opacity:.85}).addTo(map);
+  L.polyline(DATA.local,{color:'#b5452b',weight:4,opacity:.75}).addTo(map);
+  L.polyline(DATA.walk,{color:'#5b7b3a',weight:3,dashArray:'6 6'}).addTo(map);
+  L.polyline(DATA.back,{color:'#8b6b4a',weight:3,opacity:.5,dashArray:'2 6'}).addTo(map);
+  const g=[];
+  DATA.stops.forEach(s=>{
+    if(s.id===9) return; /* return marker same as start; skip duplicate pin */
+    const icon=L.divIcon({className:'',html:`<div class="num ${s.kind}">${s.id}</div>`,iconSize:[30,30],iconAnchor:[15,15]});
+    const m=L.marker(s.gcj,{icon}).addTo(map);
+    m.bindPopup(`<b>${s.id}. ${s.name}</b><br>${s.time}<br>${DETAIL[s.id].desc}${s.approx?'<br><i style="color:#8a6f50">位置约略</i>':''}<br><a href="${nav(s)}" target="_blank">📍 高德导航</a>`);
+    g.push(s.gcj);
+  });
+  const sx=L.latLngBounds(g.slice(1));
+  map.fitBounds(sx,{padding:[36,36]});
+  const all=L.latLngBounds(DATA.go.concat(g).concat(DATA.back));
+  const C=L.Control.extend({onAdd:function(){const b=L.DomUtil.create('a','btn');b.style.cssText='margin:0;cursor:pointer';b.innerHTML='🗺️ 绍兴/全程';let full=false;b.onclick=e=>{L.DomEvent.stop(e);full=!full;map.fitBounds(full?all:sx,{padding:[30,30]})};return b}});
+  new C({position:'topright'}).addTo(map);
+}
+function loadLeaflet(srcs){if(!srcs.length){initMap();return}const s=document.createElement('script');s.src=srcs[0];s.onload=initMap;s.onerror=()=>loadLeaflet(srcs.slice(1));document.head.appendChild(s)}
+loadLeaflet(['https://cdn.bootcdn.net/ajax/libs/leaflet/1.9.4/leaflet.min.js','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js','https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js']);
+</script>
+</body>
+</html>
